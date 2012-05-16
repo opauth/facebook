@@ -71,7 +71,6 @@ class Facebook extends OpauthStrategy{
 				if (!empty($me->first_name)) $this->auth['info']['first_name'] = $me->first_name;
 				if (!empty($me->last_name)) $this->auth['info']['last_name'] = $me->last_name;
 				if (!empty($me->location)) $this->auth['info']['location'] = $me->location->name;
-				if (!empty($me->location)) $this->auth['info']['location'] = $me->location->name;
 				if (!empty($me->link)) $this->auth['info']['urls']['facebook'] = $me->link;
 				if (!empty($me->website)) $this->auth['info']['urls']['website'] = $me->website;
 				
