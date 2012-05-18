@@ -24,9 +24,9 @@ class Facebook extends OpauthStrategy{
 	 * eg. array('scope' => 'email');
 	 */
 	public $defaults = array(
-		'redirect_uri' => '{complete_path}facebook/int_callback'
+		'redirect_uri' => '{complete_url_to_strategy}int_callback'
 	);
-	
+
 	/**
 	 * Auth request
 	 */
@@ -36,6 +36,7 @@ class Facebook extends OpauthStrategy{
 			'client_id' => $this->strategy['app_id'],
 			'redirect_uri' => $this->strategy['redirect_uri']
 		);
+
 		if (!empty($this->strategy['scope'])) $params['scope'] = $this->strategy['scope'];
 		if (!empty($this->strategy['state'])) $params['state'] = $this->strategy['state'];
 		if (!empty($this->strategy['response_type'])) $params['response_type'] = $this->strategy['response_type'];
@@ -56,7 +57,6 @@ class Facebook extends OpauthStrategy{
 				'redirect_uri'=> $this->strategy['redirect_uri'],
 				'code' => trim($_GET['code'])
 			);
-			
 			$response = $this->httpRequest($url.'?'.http_build_query($params), null, $headers);
 			
 			parse_str($response, $results);
@@ -65,7 +65,7 @@ class Facebook extends OpauthStrategy{
 				$me = $this->me($results['access_token']);
 				
 				$this->auth = array(
-					'provider' => 'facebook',
+					'provider' => 'Facebook',
 					'uid' => $me->id,
 					'info' => array(
 						'name' => $me->name,
@@ -96,7 +96,7 @@ class Facebook extends OpauthStrategy{
 			}
 			else{
 				$error = array(
-					'provider' => 'facebook',
+					'provider' => 'Facebook',
 					'code' => 'access_token_error',
 					'message' => 'Failed when attempting to obtain access token',
 					'raw' => $headers
@@ -107,7 +107,7 @@ class Facebook extends OpauthStrategy{
 		}
 		else{
 			$error = array(
-				'provider' => 'facebook',
+				'provider' => 'Facebook',
 				'code' => $_GET['error'],
 				'message' => $_GET['error_description'],
 				'raw' => $_GET
