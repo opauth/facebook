@@ -45,7 +45,7 @@ class Facebook extends OpauthStrategy{
 				'code' => trim($_GET['code'])
 			);
 			
-			$response = $this->httpRequest($url.'?'.http_build_query($params));
+			$response = $this->httpRequest($url.'?'.http_build_query($params), null, $headers);
 			
 			parse_str($response, $results);
 
@@ -82,10 +82,26 @@ class Facebook extends OpauthStrategy{
 				
 				$this->callback();
 			}
+			else{
+				$error = array(
+					'provider' => 'facebook',
+					'code' => 'access_token_error',
+					'message' => 'Failed when attempting to obtain access token',
+					'raw' => $headers
+				);
+
+				$this->errorCallback($error);
+			}
 		}
 		else{
-			// Error or authentication declined
-			// TODO: error handling
+			$error = array(
+				'provider' => 'facebook',
+				'code' => $_GET['error'],
+				'message' => $_GET['error_description'],
+				'raw' => $_GET
+			);
+			
+			$this->errorCallback($error);
 		}
 	}
 	
