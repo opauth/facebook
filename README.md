@@ -1,40 +1,48 @@
 Opauth-Facebook
-===============
+=============
 [Opauth][1] strategy for Facebook authentication.
 
 Implemented based on https://developers.facebook.com/docs/authentication/
 
+Getting started
+----------------
+1. Install Opauth-Twitter:
+   ```bash
+   cd path_to_opauth/Strategy
+   git clone git://github.com/uzyn/opauth-facebook.git Facebook
+   ```
 
-Getting Started
----------------
-1. Set up [Opauth][1]
-2. Place this at `path_to_opauth/lib/Opauth/Strategy/Facebook/`
-3. Add the following to Opauth config's `Strategy` array:
+2. Create Facebook application at https://developers.facebook.com/apps/
 
-	```php
-	<?php
-		'Facebook' => array(
-			'app_id' => 'YOUR OWN FACEBOOK APP ID',
-			'app_secret' => 'YOUR OWN FACEBOOK APP SECRET KEY'
-		)
-	```
+3. Configure Opauth-Facebook strategy with at least `App ID` and `App Secret`.
 
-4. Send users to `://path_to_opauth/facebook` for authentication.
+#### Notes when creating application:
 
-Strategy parameters
------------------------
+- Make sure to enter App Domains
 
-### Required
-`app_id`, `app_secret`
+- "Website with Facebook Login" must be checked, but for "Site URL", you can enter any landing URL.
 
-### Optional
-`scope`, `state`, `response_type`, `display`
 
-Refer to Facebook's [OAuth Dialog documentation](https://developers.facebook.com/docs/reference/dialogs/oauth/) for details on these parameters
+Strategy configuration
+----------------------
+
+Required parameters:
+
+```php
+<?php
+'Facebook' => array(
+	'app_id' => 'YOUR APP ID',
+	'app_secret' => 'YOUR APP SECRET'
+)
+```
+
+Even though `scope` is an optional configuration parameter for Opauth-Facebook, for most cases you would like to explicitly define it. It should be defined in a comma-separated string. 
+
+Refer to [Facebook Permissions Reference](https://developers.facebook.com/docs/authentication/permissions/) for list of valid permissions..
 
 License
 ---------
-The MIT License  
+Opauth-Facebook is MIT Licensed  
 Copyright © 2012 U-Zyn Chua (http://uzyn.com)
 
 [1]: https://github.com/uzyn/opauth
