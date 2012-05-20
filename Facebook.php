@@ -57,7 +57,7 @@ class Facebook extends OpauthStrategy{
 				'redirect_uri'=> $this->strategy['redirect_uri'],
 				'code' => trim($_GET['code'])
 			);
-			$response = $this->httpRequest($url.'?'.http_build_query($params), null, $headers);
+			$response = $this->serverGet($url, $params, null, $headers);
 			
 			parse_str($response, $results);
 
@@ -124,31 +124,22 @@ class Facebook extends OpauthStrategy{
 	 * @return array Parsed JSON results
 	 */
 	private function me($access_token){
-		$me = $this->httpRequest('https://graph.facebook.com/me?access_token='.$access_token);
+		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token), null, $headers);
 		if (!empty($me)){
 			return json_decode($me);
 		}
-	}
-	
-	/**
-	 * Simple server-side HTTP request with file_get_contents
-	 * Reluctant to use any more advanced transport like cURL for the time being 
-	 *   to not having to set cURL as being a requirement.
-	 * 
-	 * @param $url string Full URL to load
-	 * @param $options array Stream context options (http://php.net/stream-context-create)
-	 * @param $responseHeaders string Response headers after HTTP call. Useful for error debugging.
-	 * @return string Content resulted from request, without headers
-	 */
-	private static function httpRequest($url, $options = null, &$responseHeaders = null){
-		$context = null;
-		if (!empty($options) && is_array($options)){
-			$context = stream_context_create($options);
+		else{
+			$error = array(
+				'provider' => 'Facebook',
+				'code' => 'me_error',
+				'message' => 'Failed when attempting to query for user information',
+				'raw' => array(
+					'response' => $me,
+					'headers' => $headers
+				)
+			);
+
+			$this->errorCallback($error);
 		}
-		
-		$content = @file_get_contents($url, false, $context);
-		$responseHeaders = implode("\r\n", $http_response_header);
-		
-		return $content;
 	}
 }
