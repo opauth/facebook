@@ -13,15 +13,12 @@ Getting started
    ```
 
 2. Create Facebook application at https://developers.facebook.com/apps/
+   - Remember to enter App Domains
+   - "Website with Facebook Login" must be checked, but for "Site URL", you can enter any landing URL.
 
 3. Configure Opauth-Facebook strategy with at least `App ID` and `App Secret`.
 
-#### Notes when creating application:
-
-- Make sure to enter App Domains
-
-- "Website with Facebook Login" must be checked, but for "Site URL", you can enter any landing URL.
-
+4. Direct user to `http://path_to_opauth/facebook` to authenticate
 
 Strategy configuration
 ----------------------
