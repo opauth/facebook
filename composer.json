@@ -1,5 +1,5 @@
 {
-	"name": "opauth/strategy-facebook",
+	"name": "opauth/facebook",
 	"description": "Facebook strategy for Opauth",
 	"keywords": ["authentication","auth","facebook"],
 	"homepage": "http://opauth.org",
