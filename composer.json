@@ -1,21 +1,22 @@
 {
-	"name": "uzyn/opauth-facebook",
+	"name": "opauth/strategy-facebook",
 	"description": "Facebook strategy for Opauth",
-	"version": "0.1.0",
+	"keywords": ["authentication","auth","facebook"],
 	"homepage": "http://opauth.org",
 	"license": "MIT",
 	"authors": [
 		{
 			"name": "U-Zyn Chua",
-			"email": "chua@uzyn.com"
+			"email": "chua@uzyn.com",
+			"homepage": "http://uzyn.com"
 		}
 	],
 	"require": {
 		"php": ">=5.2.0",
-		"uzyn/opauth": "*"
+		"uzyn/opauth": "0.*"
 	},
 	"autoload": {
-		"psr-0": { 
+		"psr-0": {
 			"": "."
 		}
 	}
