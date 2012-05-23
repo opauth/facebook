@@ -11,7 +11,7 @@
  * @license			MIT License
  */
 
-class Facebook extends OpauthStrategy{
+class FacebookStrategy extends OpauthStrategy{
 	
 	/**
 	 * Compulsory config keys, listed as unassociative arrays
