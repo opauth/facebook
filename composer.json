@@ -1,0 +1,22 @@
+{
+	"name": "uzyn/opauth-facebook",
+	"description": "Facebook strategy for Opauth",
+	"version": "0.1.0",
+	"homepage": "http://opauth.org",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "U-Zyn Chua",
+			"email": "chua@uzyn.com"
+		}
+	],
+	"require": {
+		"php": ">=5.2.0",
+		"uzyn/opauth": "*"
+	},
+	"autoload": {
+		"psr-0": { 
+			"": "."
+		}
+	}
+}
