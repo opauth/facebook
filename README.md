@@ -6,7 +6,7 @@ Implemented based on https://developers.facebook.com/docs/authentication/
 
 Getting started
 ----------------
-1. Install Opauth-Twitter:
+1. Install Opauth-Facebook:
    ```bash
    cd path_to_opauth/Strategy
    git clone git://github.com/uzyn/opauth-facebook.git Facebook
