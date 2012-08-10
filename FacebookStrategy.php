@@ -49,6 +49,10 @@ class FacebookStrategy extends OpauthStrategy{
 	 * Internal callback, after Facebook's OAuth
 	 */
 	public function int_callback(){
+	   // Fix for nginx compatibility when no $_GET available
+	  $request_uri = parse_url($_SERVER['REQUEST_URI']);
+	  parse_str($request_uri['query'], $_GET);
+	  
 		if (array_key_exists('code', $_GET) && !empty($_GET['code'])){
 			$url = 'https://graph.facebook.com/oauth/access_token';
 			$params = array(
