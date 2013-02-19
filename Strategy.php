@@ -25,6 +25,23 @@ class Strategy extends AbstractStrategy {
 	public $expects = array('app_id', 'app_secret');
 
 	/**
+	 * Map response from raw data
+	 *
+	 * @var array
+	 */
+	public $responseMap = array(
+		'name' => 'username',
+		'uid' => 'id',
+		'info.name' => 'name',
+		'info.email' => 'email',
+		'info.nickname' => 'username',
+		'info.first_name' => 'first_name',
+		'info.last_name' => 'last_name',
+		'info.location' => 'location.name',
+		'info.urls.website' => 'website'
+	);
+
+	/**
 	 * Auth request
 	 */
 	public function request() {
@@ -46,64 +63,76 @@ class Strategy extends AbstractStrategy {
 	 * Internal callback, after Facebook's OAuth
 	 */
 	public function callback() {
-		if (array_key_exists('code', $_GET) && !empty($_GET['code'])){
-			$url = 'https://graph.facebook.com/oauth/access_token';
-			$params = array(
-				'redirect_uri'=> $this->callbackUrl(),
-				'code' => trim($_GET['code'])
-			);
-			$strategyKeys = array(
-				'app_id' => 'client_id',
-				'app_secret' => 'client_secret'
-			);
-			$params = $this->addParams($strategyKeys, $params);
-			$response = HttpClient::get($url, $params);
-
-			parse_str($response, $results);
-
-			if (!empty($results) && !empty($results['access_token'])){
-				$me = $this->me($results['access_token']);
-
-				$response = new Response($this->strategy['provider'], $this->recursiveGetObjectVars($me));
-				$response->credentials = array(
-					'token' => $results['access_token'],
-					'expires' => date('c', time() + $results['expires'])
-				);
-				$response->info['image'] = 'https://graph.facebook.com/'. $me->id. '/picture?type=square';
-				$response->setMap(array(
-					'name' => 'username',
-					'uid' => 'id',
-					'info.name' => 'name',
-					'info.email' => 'email',
-					'info.nickname' => 'username',
-					'info.first_name' => 'first_name',
-					'info.last_name' => 'last_name',
-					'info.location' => 'location.name',
-					'info.urls.website' => 'website'
-				));
-				return $response;
-			}
-			else{
-				$error = array(
-					'provider' => 'Facebook',
-					'code' => 'access_token_error',
-					'message' => 'Failed when attempting to obtain access token',
-					'raw' => HttpClient::$responseHeaders
-				);
-
-				return $this->errorCallback($error);
-			}
+		if (!array_key_exists('code', $_GET) || empty($_GET['code'])) {
+			return $this->codeError();
 		}
-		else{
-			$error = array(
-				'provider' => 'Facebook',
-				'code' => $_GET['error'],
-				'message' => $_GET['error_description'],
-				'raw' => $_GET
-			);
 
-			return $this->errorCallback($error);
+		$url = 'https://graph.facebook.com/oauth/access_token';
+		$params = $this->buildParams();
+		$response = HttpClient::get($url, $params);
+		parse_str($response, $results);
+
+		if (empty($results) || empty($results['access_token'])) {
+			return $this->tokenError();
 		}
+
+		$me = $this->me($results['access_token']);
+
+		$response = new Response($this->strategy['provider'], $me);
+		$response->credentials = array(
+			'token' => $results['access_token'],
+			'expires' => date('c', time() + $results['expires'])
+		);
+		$response->info['image'] = 'https://graph.facebook.com/'. $me['id'] . '/picture?type=square';
+		$response->setMap($this->responseMap);
+		return $response;
+	}
+
+	/**
+	 * Helper method for callback()
+	 *
+	 * @return array Parameter array
+	 */
+	protected function buildParams() {
+		$params = array(
+			'redirect_uri'=> $this->callbackUrl(),
+			'code' => trim($_GET['code'])
+		);
+		$strategyKeys = array(
+			'app_id' => 'client_id',
+			'app_secret' => 'client_secret'
+		);
+		return $this->addParams($strategyKeys, $params);
+	}
+
+	/**
+	 *
+	 * @return type
+	 */
+	protected function codeError() {
+		$error = array(
+			'provider' => $this->strategy['provider'],
+			'code' => $_GET['error'],
+			'message' => $_GET['error_description'],
+			'raw' => $_GET
+		);
+
+		return $this->errorCallback($error);
+	}
+
+	/**
+	 *
+	 * @return returns
+	 */
+	protected function tokenError() {
+		$error = array(
+			'provider' => $this->strategy['provider'],
+			'code' => 'access_token_error',
+			'message' => 'Failed when attempting to obtain access token',
+			'raw' => HttpClient::$responseHeaders
+		);
+
+		return $this->errorCallback($error);
 	}
 
 	/**
@@ -112,12 +141,9 @@ class Strategy extends AbstractStrategy {
 	 * @param string $access_token
 	 * @return array Parsed JSON results
 	 */
-	private function me($access_token) {
+	protected function me($access_token) {
 		$me = HttpClient::get('https://graph.facebook.com/me', array('access_token' => $access_token));
-		if (!empty($me)) {
-			return json_decode($me);
-		}
-		else{
+		if (empty($me)) {
 			$error = array(
 				'provider' => 'Facebook',
 				'code' => 'me_error',
@@ -130,5 +156,6 @@ class Strategy extends AbstractStrategy {
 
 			return $this->errorCallback($error);
 		}
+		return $this->recursiveGetObjectVars(json_decode($me));
 	}
 }
