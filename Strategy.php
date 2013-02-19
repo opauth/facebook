@@ -10,7 +10,7 @@
  * @package      Opauth.FacebookStrategy
  * @license      MIT License
  */
-namespace Opauth\Provider\Facebook;
+namespace Opauth\Strategy\Facebook;
 
 use Opauth\AbstractStrategy;
 use Opauth\HttpClient;
