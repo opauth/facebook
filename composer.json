@@ -12,12 +12,11 @@
 		}
 	],
 	"require": {
-		"php": ">=5.2.0",
-		"opauth/opauth": ">=0.2.0"
+		"php": ">=5.3.0",
+		"opauth/opauth": "dev-wip/1.0"
 	},
 	"autoload": {
-		"psr-0": {
-			"": "."
-		}
-	}
+		"psr-0": { "Opauth\\Provider\\Facebook": "" }
+	},
+	"target-dir": "Opauth/Provider/Facebook"
 }
