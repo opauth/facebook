@@ -68,7 +68,7 @@ class Strategy extends AbstractStrategy {
 		}
 
 		$url = 'https://graph.facebook.com/oauth/access_token';
-		$params = $this->buildParams();
+		$params = $this->callbackParams();
 		$response = HttpClient::get($url, $params);
 		parse_str($response, $results);
 
@@ -93,7 +93,7 @@ class Strategy extends AbstractStrategy {
 	 *
 	 * @return array Parameter array
 	 */
-	protected function buildParams() {
+	protected function callbackParams() {
 		$params = array(
 			'redirect_uri'=> $this->callbackUrl(),
 			'code' => trim($_GET['code'])
