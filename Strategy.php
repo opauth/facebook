@@ -78,13 +78,12 @@ class Strategy extends AbstractStrategy {
 
 		$me = $this->me($results['access_token']);
 
-		$response = new Response($this->strategy['provider'], $me);
+		$response = $this->response($me);
 		$response->credentials = array(
 			'token' => $results['access_token'],
 			'expires' => date('c', time() + $results['expires'])
 		);
 		$response->info['image'] = 'https://graph.facebook.com/'. $me['id'] . '/picture?type=square';
-		$response->setMap($this->responseMap);
 		return $response;
 	}
 
@@ -111,13 +110,11 @@ class Strategy extends AbstractStrategy {
 	 */
 	protected function codeError() {
 		$error = array(
-			'provider' => $this->strategy['provider'],
 			'code' => $_GET['error'],
 			'message' => $_GET['error_description'],
-			'raw' => $_GET
 		);
 
-		return $this->errorCallback($error);
+		return $this->response($_GET, $error);
 	}
 
 	/**
@@ -126,13 +123,11 @@ class Strategy extends AbstractStrategy {
 	 */
 	protected function tokenError() {
 		$error = array(
-			'provider' => $this->strategy['provider'],
 			'code' => 'access_token_error',
 			'message' => 'Failed when attempting to obtain access token',
-			'raw' => HttpClient::$responseHeaders
 		);
 
-		return $this->errorCallback($error);
+		return $this->response(HttpClient::$responseHeaders, $error);
 	}
 
 	/**
@@ -145,16 +140,11 @@ class Strategy extends AbstractStrategy {
 		$me = HttpClient::get('https://graph.facebook.com/me', array('access_token' => $access_token));
 		if (empty($me)) {
 			$error = array(
-				'provider' => 'Facebook',
 				'code' => 'me_error',
-				'message' => 'Failed when attempting to query for user information',
-				'raw' => array(
-					'response' => $me,
-					'headers' => HttpClient::$responseHeaders
-				)
+				'message' => 'Failed when attempting to query for user information'
 			);
 
-			return $this->errorCallback($error);
+			return $this->response(HttpClient::$responseHeaders, $error);
 		}
 		return $this->recursiveGetObjectVars(json_decode($me));
 	}
