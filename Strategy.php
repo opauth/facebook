@@ -72,11 +72,18 @@ class Strategy extends AbstractStrategy {
 		$response = HttpClient::get($url, $params);
 		parse_str($response, $results);
 
-		if (empty($results) || empty($results['access_token'])) {
-			return $this->tokenError();
+		if (empty($results['access_token'])) {
+			return $this->tokenError($response);
 		}
 
 		$me = $this->me($results['access_token']);
+		if (!$me) {
+			$error = array(
+				'code' => 'me_error',
+				'message' => 'Failed when attempting to query for user information'
+			);
+			return $this->response(null, $error);
+		}
 
 		$response = $this->response($me);
 		$response->credentials = array(
@@ -121,13 +128,13 @@ class Strategy extends AbstractStrategy {
 	 *
 	 * @return returns
 	 */
-	protected function tokenError() {
+	protected function tokenError($raw) {
 		$error = array(
 			'code' => 'access_token_error',
 			'message' => 'Failed when attempting to obtain access token',
 		);
 
-		return $this->response(HttpClient::$responseHeaders, $error);
+		return $this->response($raw, $error);
 	}
 
 	/**
@@ -139,12 +146,7 @@ class Strategy extends AbstractStrategy {
 	protected function me($access_token) {
 		$me = HttpClient::get('https://graph.facebook.com/me', array('access_token' => $access_token));
 		if (empty($me)) {
-			$error = array(
-				'code' => 'me_error',
-				'message' => 'Failed when attempting to query for user information'
-			);
-
-			return $this->response(HttpClient::$responseHeaders, $error);
+			return false;
 		}
 		return $this->recursiveGetObjectVars(json_decode($me));
 	}
