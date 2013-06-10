@@ -13,8 +13,6 @@
 namespace Opauth\Strategy\Facebook;
 
 use Opauth\AbstractStrategy;
-use Opauth\HttpClient;
-use Opauth\Response;
 
 class Strategy extends AbstractStrategy {
 
@@ -56,7 +54,7 @@ class Strategy extends AbstractStrategy {
 		);
 		$params = $this->addParams($strategyKeys);
 		$params['redirect_uri'] = $this->callbackUrl();
-		HttpClient::redirect($url, $params);
+		$this->http->redirect($url, $params);
 	}
 
 	/**
@@ -69,7 +67,7 @@ class Strategy extends AbstractStrategy {
 
 		$url = 'https://graph.facebook.com/oauth/access_token';
 		$params = $this->callbackParams();
-		$response = HttpClient::get($url, $params);
+		$response = $this->http->get($url, $params);
 		parse_str($response, $results);
 
 		if (empty($results['access_token'])) {
@@ -144,7 +142,7 @@ class Strategy extends AbstractStrategy {
 	 * @return array Parsed JSON results
 	 */
 	protected function me($access_token) {
-		$me = HttpClient::get('https://graph.facebook.com/me', array('access_token' => $access_token));
+		$me = $this->http->get('https://graph.facebook.com/me', array('access_token' => $access_token));
 		if (empty($me)) {
 			return false;
 		}
