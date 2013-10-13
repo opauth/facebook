@@ -42,4 +42,4 @@ License
 Opauth-Facebook is MIT Licensed  
 Copyright © 2012 U-Zyn Chua (http://uzyn.com)
 
-[1]: https://github.com/uzyn/opauth
+[1]: https://github.com/opauth/opauth
