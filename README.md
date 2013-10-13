@@ -9,7 +9,7 @@ Getting started
 1. Install Opauth-Facebook:
    ```bash
    cd path_to_opauth/Strategy
-   git clone git://github.com/uzyn/opauth-facebook.git Facebook
+   git clone https://github.com/opauth/facebook.git Facebook
    ```
 
 2. Create Facebook application at https://developers.facebook.com/apps/
