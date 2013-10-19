@@ -76,7 +76,8 @@ class FacebookStrategy extends OpauthStrategy{
 						'token' => $results['access_token'],
 						'expires' => date('c', time() + $results['expires'])
 					),
-					'raw' => $me
+					'raw' => $me,
+					'state' => $_GET['state']
 				);
 				
 				if (!empty($me->email)) $this->auth['info']['email'] = $me->email;
