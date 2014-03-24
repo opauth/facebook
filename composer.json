@@ -20,7 +20,6 @@
 		"opauth/opauth": "dev-wip/1.0"
 	},
 	"autoload": {
-		"psr-0": { "Opauth\\Strategy\\Facebook": "" }
-	},
-	"target-dir": "Opauth/Strategy/Facebook"
+		"psr-4": { "Opauth\\Facebook\\Strategy\\": "src" }
+	}
 }

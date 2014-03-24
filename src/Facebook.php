@@ -10,11 +10,11 @@
  * @package      Opauth.FacebookStrategy
  * @license      MIT License
  */
-namespace Opauth\Strategy\Facebook;
+namespace Opauth\Facebook\Strategy;
 
-use Opauth\AbstractStrategy;
+use Opauth\Opauth\AbstractStrategy;
 
-class Strategy extends AbstractStrategy {
+class Facebook extends AbstractStrategy {
 
 	/**
 	 * Compulsory config keys, listed as unassociative arrays
