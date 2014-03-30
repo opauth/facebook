@@ -83,11 +83,7 @@ class Facebook extends AbstractStrategy
 
         $me = $this->me($results['access_token']);
         if (!$me) {
-            $error = array(
-                'code' => 'me_error',
-                'message' => 'Failed when attempting to query for user information'
-            );
-            return $this->response(null, $error);
+            return $this->error('Failed when attempting to query for user information.', 'me_error');
         }
 
         $response = $this->response($me);
@@ -122,12 +118,7 @@ class Facebook extends AbstractStrategy
      */
     protected function codeError()
     {
-        $error = array(
-            'code' => $_GET['error'],
-            'message' => $_GET['error_description'],
-        );
-
-        return $this->response($_GET, $error);
+        return $this->error($_GET['error_description'], $_GET['error'], $_GET);
     }
 
     /**
@@ -136,12 +127,7 @@ class Facebook extends AbstractStrategy
      */
     protected function tokenError($raw)
     {
-        $error = array(
-            'code' => 'access_token_error',
-            'message' => 'Failed when attempting to obtain access token',
-        );
-
-        return $this->response($raw, $error);
+        return $this->error('Failed when attempting to obtain access token.', 'access_token_error', $raw);
     }
 
     /**
