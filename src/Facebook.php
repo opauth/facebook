@@ -58,7 +58,7 @@ class Facebook extends AbstractStrategy
         );
         $params = $this->addParams($strategyKeys);
         $params['redirect_uri'] = $this->callbackUrl();
-        $this->http->redirect($url, $params);
+        $this->redirect($url, $params);
     }
 
     /**
