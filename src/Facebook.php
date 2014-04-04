@@ -89,7 +89,7 @@ class Facebook extends AbstractStrategy
         $response = $this->response($me);
         $response->credentials = array(
             'token' => $results['access_token'],
-            'expires' => date('c', time() + $results['expires'])
+            'expires' => isset($results['expires']) ? date('c', time() + $results['expires']) : null
         );
         $response->info['image'] = 'https://graph.facebook.com/' . $me['id'] . '/picture?type=square';
         return $response;
