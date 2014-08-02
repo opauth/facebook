@@ -29,11 +29,10 @@ class Facebook extends AbstractStrategy
      * @var array
      */
     public $responseMap = array(
-        'name' => 'username',
+        'name' => 'name',
         'uid' => 'id',
         'info.name' => 'name',
         'info.email' => 'email',
-        'info.nickname' => 'username',
         'info.first_name' => 'first_name',
         'info.last_name' => 'last_name',
         'info.location' => 'location.name',
