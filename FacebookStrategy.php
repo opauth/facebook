@@ -28,10 +28,15 @@ class FacebookStrategy extends OpauthStrategy{
 	);
 
 	/**
+	 * OAuth verion
+	 */
+	public $version = 'v2.0';
+
+	/**
 	 * Auth request
 	 */
 	public function request(){
-		$url = 'https://www.facebook.com/dialog/oauth';
+		$url = "https://www.facebook.com/{$this->version}/dialog/oauth";
 		$params = array(
 			'client_id' => $this->strategy['app_id'],
 			'redirect_uri' => $this->strategy['redirect_uri']
@@ -51,7 +56,7 @@ class FacebookStrategy extends OpauthStrategy{
 	 */
 	public function int_callback(){
 		if (array_key_exists('code', $_GET) && !empty($_GET['code'])){
-			$url = 'https://graph.facebook.com/oauth/access_token';
+			$url = "https://graph.facebook.com/{$this->version}/oauth/access_token";
 			$params = array(
 				'client_id' =>$this->strategy['app_id'],
 				'client_secret' => $this->strategy['app_secret'],
@@ -70,7 +75,7 @@ class FacebookStrategy extends OpauthStrategy{
 					'uid' => $me->id,
 					'info' => array(
 						'name' => $me->name,
-						'image' => 'https://graph.facebook.com/'.$me->id.'/picture?type=square'
+						'image' => "https://graph.facebook.com/{$this->version}/{$me->id}/picture?type=square"
 					),
 					'credentials' => array(
 						'token' => $results['access_token'],
@@ -125,7 +130,7 @@ class FacebookStrategy extends OpauthStrategy{
 	 * @return array Parsed JSON results
 	 */
 	private function me($access_token){
-		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token), null, $headers);
+		$me = $this->serverGet("https://graph.facebook.com/{$this->version}/me", array('access_token' => $access_token), null, $headers);
 		if (!empty($me)){
 			return json_decode($me);
 		}
