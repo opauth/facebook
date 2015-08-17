@@ -86,6 +86,9 @@ class FacebookStrategy extends OpauthStrategy{
 				if (!empty($me->location)) $this->auth['info']['location'] = $me->location->name;
 				if (!empty($me->link)) $this->auth['info']['urls']['facebook'] = $me->link;
 				if (!empty($me->website)) $this->auth['info']['urls']['website'] = $me->website;
+				if (!empty($me->gender)) $this->auth['info']['gender'] = $me->gender;
+				if (!empty($me->locale)) $this->auth['info']['locale'] = $me->locale;
+				if (!empty($me->timezone)) $this->auth['info']['timezone'] = $me->timezone;
 				
 				/**
 				 * Missing optional info values
@@ -125,7 +128,10 @@ class FacebookStrategy extends OpauthStrategy{
 	 * @return array Parsed JSON results
 	 */
 	private function me($access_token){
-		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token), null, $headers);
+		$me = $this->serverGet('https://graph.facebook.com/me', array(
+			'access_token' => $access_token,
+			'fields' => 'id,name,first_name,middle_name,last_name,age_range,gender,locale,timezone,verified,email'
+		), null, $headers);
 		if (!empty($me)){
 			return json_decode($me);
 		}
