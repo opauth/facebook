@@ -63,7 +63,12 @@ class FacebookStrategy extends OpauthStrategy{
 			parse_str($response, $results);
 
 			if (!empty($results) && !empty($results['access_token'])){
-				$me = $this->me($results['access_token']);
+				
+				$fields = array();
+				if ( ! empty( $this->strategy['fields']) )
+					$fields = $this->strategy['fields'];
+					
+				$me = $this->me($results['access_token'], $fields );
 
 				$this->auth = array(
 					'provider' => 'Facebook',
@@ -78,6 +83,9 @@ class FacebookStrategy extends OpauthStrategy{
 					),
 					'raw' => $me
 				);
+				
+				// fields reference 
+				// https://developers.facebook.com/docs/graph-api/reference/v2.4/user
 				
 				if (!empty($me->email)) $this->auth['info']['email'] = $me->email;
 				if (!empty($me->username)) $this->auth['info']['nickname'] = $me->username;
@@ -118,14 +126,17 @@ class FacebookStrategy extends OpauthStrategy{
 		}
 	}
 	
+	
 	/**
 	 * Queries Facebook Graph API for user info
 	 *
 	 * @param string $access_token 
 	 * @return array Parsed JSON results
 	 */
-	private function me($access_token){
-		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token), null, $headers);
+	private function me($access_token, $fields = array() ){
+
+		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token) + compact('fields') , null, $headers);
+		
 		if (!empty($me)){
 			return json_decode($me);
 		}
