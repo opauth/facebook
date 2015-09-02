@@ -35,6 +35,24 @@ Required parameters:
 
 Even though `scope` is an optional configuration parameter for Opauth-Facebook, for most cases you would like to explicitly define it. It should be defined in a comma-separated string. 
 
+From Graph API 2.4 , it's needed to provide required fields to user graph request
+https://developers.facebook.com/blog/post/2015/07/08/graph-api-v2.4/
+
+In order to solve missings fields, now can set your required fields at `field` param like this :
+	
+```php
+<?php
+'Facebook' => array(
+	'app_id' => 'YOUR APP ID',
+	'app_secret' => 'YOUR APP SECRET'
+	'scope' => 'email',
+    'fields' => 'id,first_name,last_name,gender,email',	
+)
+```
+
+It's a minor fix, but enough to continue running with this opauth strategy.
+
+
 Refer to [Facebook Permissions Reference](https://developers.facebook.com/docs/authentication/permissions/) for list of valid permissions..
 
 License
