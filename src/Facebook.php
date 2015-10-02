@@ -137,7 +137,10 @@ class Facebook extends AbstractStrategy
      */
     protected function me($access_token)
     {
-        $me = $this->http->get('https://graph.facebook.com/me', array('access_token' => $access_token));
+        $me = $this->http->get('https://graph.facebook.com/me', array(
+            'access_token' => $access_token,
+            'fields' => 'id,name,first_name,middle_name,last_name,age_range,gender,locale,timezone,verified,email'
+        ));
         if (empty($me)) {
             return false;
         }
