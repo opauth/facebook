@@ -33,9 +33,9 @@ Required parameters:
 )
 ```
 
-Even though `scope` is an optional configuration parameter for Opauth-Facebook, for most cases you would like to explicitly define it. It should be defined in a comma-separated string. 
+Even though `fields` is an optional configuration parameter for Opauth-Facebook, for most cases you would like to explicitly define it. It should be defined in a comma-separated string. 
 
-Refer to [Facebook Permissions Reference](https://developers.facebook.com/docs/authentication/permissions/) for list of valid permissions..
+Refer to [Facebook Fields Reference](https://developers.facebook.com/docs/graph-api/reference/user) for list of valid fields.
 
 License
 ---------
