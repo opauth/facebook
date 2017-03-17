@@ -1,5 +1,5 @@
 {
-	"name": "schoolwith/facebook",
+	"name": "schoolwith/opauth-facebook",
 	"description": "Facebook strategy for Opauth",
 	"keywords": ["authentication","auth","facebook"],
 	"homepage": "http://opauth.org",
