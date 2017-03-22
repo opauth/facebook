@@ -70,7 +70,7 @@ class FacebookStrategy extends OpauthStrategy{
 					'uid' => $me->id,
 					'info' => array(
 						'name' => $me->name,
-						'image' => 'https://graph.facebook.com/v2.6/'.$me->id.'/picture?type=large'
+						'image' => 'https://graph.facebook.com/v2.8/'.$me->id.'/picture?type=large'
 					),
 					'credentials' => array(
 						'token' => $results['access_token'],
@@ -129,7 +129,7 @@ class FacebookStrategy extends OpauthStrategy{
 			$fields = $this->strategy['fields'];
 		}
 
-		$me = $this->serverGet('https://graph.facebook.com/v2.6/me', array('access_token' => $access_token, 'fields' => $fields), null, $headers);
+		$me = $this->serverGet('https://graph.facebook.com/v2.8/me', array('access_token' => $access_token, 'fields' => $fields), null, $headers);
         
 		if (!empty($me)){
 			return json_decode($me);
