@@ -31,7 +31,7 @@ class FacebookStrategy extends OpauthStrategy{
 	 * Auth request
 	 */
 	public function request(){
-		$url = 'https://www.facebook.com/dialog/oauth';
+		$url = 'https://www.facebook.com/v2.8/dialog/oauth';
 		$params = array(
 			'client_id' => $this->strategy['app_id'],
 			'redirect_uri' => $this->strategy['redirect_uri']
