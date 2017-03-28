@@ -37,11 +37,11 @@ class FacebookStrategy extends OpauthStrategy{
 			'redirect_uri' => $this->strategy['redirect_uri']
 		);
 
-		if (!empty($this->strategy['scope'])) $params['scope'] = $this->strategy['scope'];
-		if (!empty($this->strategy['state'])) $params['state'] = $this->strategy['state'];
+		if (!empty($this->strategy['scope']))         $params['scope']         = $this->strategy['scope'];
+		if (!empty($this->strategy['state']))         $params['state']         = $this->strategy['state'];
 		if (!empty($this->strategy['response_type'])) $params['response_type'] = $this->strategy['response_type'];
-		if (!empty($this->strategy['display'])) $params['display'] = $this->strategy['display'];
-		if (!empty($this->strategy['auth_type'])) $params['auth_type'] = $this->strategy['auth_type'];
+		if (!empty($this->strategy['display']))       $params['display']       = $this->strategy['display'];
+		if (!empty($this->strategy['auth_type']))     $params['auth_type']     = $this->strategy['auth_type'];
 		
 		$this->clientGet($url, $params);
 	}
@@ -53,14 +53,15 @@ class FacebookStrategy extends OpauthStrategy{
 		if (array_key_exists('code', $_GET) && !empty($_GET['code'])){
 			$url = 'https://graph.facebook.com/oauth/access_token';
 			$params = array(
-				'client_id' =>$this->strategy['app_id'],
+				'client_id'     => $this->strategy['app_id'],
 				'client_secret' => $this->strategy['app_secret'],
-				'redirect_uri'=> $this->strategy['redirect_uri'],
-				'code' => trim($_GET['code'])
+				'redirect_uri'  => $this->strategy['redirect_uri'],
+				'code'          => trim($_GET['code'])
 			);
 			$response = $this->serverGet($url, $params, null, $headers);
 			
-			parse_str($response, $results);
+			$results = json_decode($response, true);
+			// parse_str($response, $results);
 
 			if (!empty($results) && !empty($results['access_token'])){
 				$me = $this->me($results['access_token']);
@@ -79,13 +80,13 @@ class FacebookStrategy extends OpauthStrategy{
 					'raw' => $me
 				);
 				
-				if (!empty($me->email)) $this->auth['info']['email'] = $me->email;
-				if (!empty($me->username)) $this->auth['info']['nickname'] = $me->username;
-				if (!empty($me->first_name)) $this->auth['info']['first_name'] = $me->first_name;
-				if (!empty($me->last_name)) $this->auth['info']['last_name'] = $me->last_name;
-				if (!empty($me->location)) $this->auth['info']['location'] = $me->location->name;
-				if (!empty($me->link)) $this->auth['info']['urls']['facebook'] = $me->link;
-				if (!empty($me->website)) $this->auth['info']['urls']['website'] = $me->website;
+				if (!empty($me->email))      $this->auth['info']['email']            = $me->email;
+				if (!empty($me->username))   $this->auth['info']['nickname']         = $me->username;
+				if (!empty($me->first_name)) $this->auth['info']['first_name']       = $me->first_name;
+				if (!empty($me->last_name))  $this->auth['info']['last_name']        = $me->last_name;
+				if (!empty($me->location))   $this->auth['info']['location']         = $me->location->name;
+				if (!empty($me->link))       $this->auth['info']['urls']['facebook'] = $me->link;
+				if (!empty($me->website))    $this->auth['info']['urls']['website']  = $me->website;
 				
 				/**
 				 * Missing optional info values
@@ -98,9 +99,9 @@ class FacebookStrategy extends OpauthStrategy{
 			else{
 				$error = array(
 					'provider' => 'Facebook',
-					'code' => 'access_token_error',
-					'message' => 'Failed when attempting to obtain access token',
-					'raw' => $headers
+					'code'     => 'access_token_error',
+					'message'  => 'Failed when attempting to obtain access token',
+					'raw'      => $headers
 				);
 
 				$this->errorCallback($error);
@@ -109,9 +110,9 @@ class FacebookStrategy extends OpauthStrategy{
 		else{
 			$error = array(
 				'provider' => 'Facebook',
-				'code' => $_GET['error'],
-				'message' => $_GET['error_description'],
-				'raw' => $_GET
+				'code'     => $_GET['error'],
+				'message'  => $_GET['error_description'],
+				'raw'      => $_GET
 			);
 			
 			$this->errorCallback($error);
@@ -125,18 +126,24 @@ class FacebookStrategy extends OpauthStrategy{
 	 * @return array Parsed JSON results
 	 */
 	private function me($access_token){
-		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token), null, $headers);
+
+		$fields = 'id,name,email';//default value
+		if ( isset($this->strategy['fields']) ) {
+			$fields = $this->strategy['fields'];
+		}
+
+		$me = $this->serverGet('https://graph.facebook.com/me', array('access_token' => $access_token, 'fields' => $fields), null, $headers);
 		if (!empty($me)){
 			return json_decode($me);
 		}
 		else{
 			$error = array(
 				'provider' => 'Facebook',
-				'code' => 'me_error',
-				'message' => 'Failed when attempting to query for user information',
-				'raw' => array(
+				'code'     => 'me_error',
+				'message'  => 'Failed when attempting to query for user information',
+				'raw'      => array(
 					'response' => $me,
-					'headers' => $headers
+					'headers'  => $headers
 				)
 			);
 
