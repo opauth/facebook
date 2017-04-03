@@ -105,8 +105,8 @@ class FacebookStrategy extends OpauthStrategy{
 		else{
 			$error = array(
 				'provider' => 'Facebook',
-				'code' => $_GET['error'],
-				'message' => $_GET['error_description'],
+				'code' => $_GET['error_code'],
+				'message' => $_GET['error_message'],
 				'raw' => $_GET
 			);
 
