@@ -1,6 +1,6 @@
 <?php
 /**
- * Facebook strategy for Opauth
+ * Facebook strategy for Opauth by djebbi walid
  * based on https://developers.facebook.com/docs/authentication/server-side/
  *
  * More information on Opauth: http://opauth.org
