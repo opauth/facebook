@@ -31,7 +31,7 @@ class FacebookStrategy extends OpauthStrategy{
 	 * Auth request
 	 */
 	public function request(){
-		$url = 'https://www.facebook.com/v2.8/dialog/oauth';
+		$url = 'https://www.facebook.com/v2.10/dialog/oauth';
 		$params = array(
 			'client_id' => $this->strategy['app_id'],
 			'redirect_uri' => $this->strategy['redirect_uri']
@@ -68,7 +68,7 @@ class FacebookStrategy extends OpauthStrategy{
 					'uid' => $me->id,
 					'info' => array(
 						'name' => $me->name,
-						'image' => 'https://graph.facebook.com/v2.8/'.$me->id.'/picture?type=large'
+						'image' => 'https://graph.facebook.com/v2.10/'.$me->id.'/picture?type=large'
 					),
 					'credentials' => array(
 						'token' => $results->access_token,
@@ -127,7 +127,8 @@ class FacebookStrategy extends OpauthStrategy{
 			$fields = $this->strategy['fields'];
 		}
 
-		$me = $this->serverGet('https://graph.facebook.com/v2.8/me', array('access_token' => $access_token, 'fields' => $fields), null, $headers);
+		//$me = $this->serverGet('https://graph.facebook.com/v2.8/me', array('access_token' => $access_token, 'fields' => $fields), null, $headers);
+		$me = $this->serverGet('https://graph.facebook.com/v2.10/me', array('appsecret_proof' => hash_hmac('sha256', $access_token, $this->strategy['app_secret']),'access_token' => $access_token, 'fields' => $fields), null, $headers);
         
 		if (!empty($me)){
 			return json_decode($me);
