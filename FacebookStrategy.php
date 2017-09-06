@@ -126,8 +126,7 @@ class FacebookStrategy extends OpauthStrategy{
 		if ( isset($this->strategy['fields']) ) {
 			$fields = $this->strategy['fields'];
 		}
-
-		//$me = $this->serverGet('https://graph.facebook.com/v2.8/me', array('access_token' => $access_token, 'fields' => $fields), null, $headers);
+		
 		$me = $this->serverGet('https://graph.facebook.com/v2.10/me', array('appsecret_proof' => hash_hmac('sha256', $access_token, $this->strategy['app_secret']),'access_token' => $access_token, 'fields' => $fields), null, $headers);
         
 		if (!empty($me)){
