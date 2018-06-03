@@ -11,6 +11,10 @@ Getting started
    cd path_to_opauth/Strategy
    git clone https://github.com/opauth/facebook.git Facebook
    ```
+   or
+   ```
+   composer require opauth/facebook
+   ```
 
 2. Create Facebook application at https://developers.facebook.com/apps/
    - Remember to enter App Domains
