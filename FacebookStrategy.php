@@ -27,11 +27,13 @@ class FacebookStrategy extends OpauthStrategy{
 		'redirect_uri' => '{complete_url_to_strategy}int_callback'
 	);
 
+	private $api_version = 'v2.10';
+
 	/**
 	 * Auth request
 	 */
 	public function request(){
-		$url = 'https://www.facebook.com/v2.10/dialog/oauth';
+		$url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
 		$params = array(
 			'client_id' => $this->strategy['app_id'],
 			'redirect_uri' => $this->strategy['redirect_uri']
@@ -50,59 +52,7 @@ class FacebookStrategy extends OpauthStrategy{
 	 * Internal callback, after Facebook's OAuth
 	 */
 	public function int_callback(){
-		if (array_key_exists('code', $_GET) && !empty($_GET['code'])){
-			$url = 'https://graph.facebook.com/oauth/access_token';
-			$params = array(
-				'client_id' =>$this->strategy['app_id'],
-				'client_secret' => $this->strategy['app_secret'],
-				'redirect_uri'=> $this->strategy['redirect_uri'],
-				'code' => trim($_GET['code'])
-			);
-			$response = $this->serverGet($url, $params, null, $headers);
-			$results = json_decode($response);
-			
-			if (!empty($results) && !empty($results->access_token)){
-				$me = $this->me($results->access_token);
-				$this->auth = array(
-					'provider' => 'Facebook',
-					'uid' => $me->id,
-					'info' => array(
-						'name' => $me->name,
-						'image' => 'https://graph.facebook.com/v2.10/'.$me->id.'/picture?type=large'
-					),
-					'credentials' => array(
-						'token' => $results->access_token,
-						'expires' => date('c', time() + $results->expires_in)
-					),
-					'raw' => $me
-				);
-
-				if (!empty($me->email)) $this->auth['info']['email'] = $me->email;
-				if (!empty($me->name)) $this->auth['info']['nickname'] = $me->name;
-				if (!empty($me->first_name)) $this->auth['info']['first_name'] = $me->first_name;
-				if (!empty($me->last_name)) $this->auth['info']['last_name'] = $me->last_name;
-				if (!empty($me->link)) $this->auth['info']['urls']['facebook'] = $me->link;
-
-				/**
-				 * Missing optional info values
-				 * - description
-				 * - phone: not accessible via Facebook Graph API
-				 */
-
-				$this->callback();
-			}
-			else{
-				$error = array(
-					'provider' => 'Facebook',
-					'code' => 'access_token_error',
-					'message' => 'Failed when attempting to obtain access token',
-					'raw' => $headers
-				);
-
-				$this->errorCallback($error);
-			}
-		}
-		else{
+		if (empty($_GET['code'])) {
 			$error = array(
 				'provider' => 'Facebook',
 				'code' => $_GET['error_code'],
@@ -111,7 +61,58 @@ class FacebookStrategy extends OpauthStrategy{
 			);
 
 			$this->errorCallback($error);
+			return;
 		}
+
+		$url = 'https://graph.facebook.com/oauth/access_token';
+		$params = array(
+			'client_id' =>$this->strategy['app_id'],
+			'client_secret' => $this->strategy['app_secret'],
+			'redirect_uri'=> $this->strategy['redirect_uri'],
+			'code' => trim($_GET['code'])
+		);
+		$response = $this->serverGet($url, $params, null, $headers);
+		$results = json_decode($response);
+
+		if (empty($results) || empty($results->access_token)) {
+			$error = array(
+				'provider' => 'Facebook',
+				'code' => 'access_token_error',
+				'message' => 'Failed when attempting to obtain access token',
+				'raw' => $headers
+			);
+
+			$this->errorCallback($error);
+			return;
+		}
+
+		$me = $this->me($results->access_token);
+		$this->auth = array(
+			'provider' => 'Facebook',
+			'uid' => $me->id,
+			'info' => array(
+				'name' => $me->name,
+				'image' => "https://graph.facebook.com/{$this->api_version}/{$me->id}/picture?type=large"
+			),
+			'credentials' => array(
+				'token' => $results->access_token,
+				'expires' => date('c', time() + $results->expires_in)
+			),
+			'raw' => $me
+		);
+
+		if (!empty($me->email)) $this->auth['info']['email'] = $me->email;
+		if (!empty($me->name)) $this->auth['info']['nickname'] = $me->name;
+		if (!empty($me->first_name)) $this->auth['info']['first_name'] = $me->first_name;
+		if (!empty($me->last_name)) $this->auth['info']['last_name'] = $me->last_name;
+		if (!empty($me->link)) $this->auth['info']['urls']['facebook'] = $me->link;
+
+		/**
+		 * Missing optional info values
+		 * - description
+		 * - phone: not accessible via Facebook Graph API
+		 */
+		$this->callback();
 	}
 
 	/**
@@ -121,18 +122,22 @@ class FacebookStrategy extends OpauthStrategy{
 	 * @return array Parsed JSON results
 	 */
 	private function me($access_token){
-		
-        $fields = 'id,name,email';//default value
+		$fields = 'id,name,email';//default value
 		if ( isset($this->strategy['fields']) ) {
 			$fields = $this->strategy['fields'];
 		}
-		
-		$me = $this->serverGet('https://graph.facebook.com/v2.10/me', array('appsecret_proof' => hash_hmac('sha256', $access_token, $this->strategy['app_secret']),'access_token' => $access_token, 'fields' => $fields), null, $headers);
-        
-		if (!empty($me)){
-			return json_decode($me);
-		}
-		else{
+
+		$me = $this->serverGet("https://graph.facebook.com/{$this->api_version}/me",
+			array(
+				'appsecret_proof' => hash_hmac('sha256', $access_token, $this->strategy['app_secret']),
+				'access_token' => $access_token,
+				'fields' => $fields
+			),
+			null,
+			$headers
+		);
+
+		if (empty($me)){
 			$error = array(
 				'provider' => 'Facebook',
 				'code' => 'me_error',
@@ -142,8 +147,9 @@ class FacebookStrategy extends OpauthStrategy{
 					'headers' => $headers
 				)
 			);
-
 			$this->errorCallback($error);
+			return;
 		}
+		return json_decode($me);
 	}
 }
