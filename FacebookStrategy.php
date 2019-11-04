@@ -27,7 +27,7 @@ class FacebookStrategy extends OpauthStrategy{
 		'redirect_uri' => '{complete_url_to_strategy}int_callback'
 	);
 
-	private $api_version = 'v2.10';
+	private $api_version = 'v2.12';
 
 	/**
 	 * Auth request
