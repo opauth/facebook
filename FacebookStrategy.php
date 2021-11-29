@@ -33,13 +33,17 @@ class FacebookStrategy extends OpauthStrategy{
 	 * Auth request
 	 */
 	public function request(){
-		$url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
 		$params = array(
 			'client_id' => $this->strategy['app_id'],
 			'redirect_uri' => $this->strategy['redirect_uri']
 		);
+        if (!empty($this->strategy['api_version'])) {
+            $params['api_version'] = $this->strategy['api_version'];
+            $this->api_version = $this->strategy['api_version'];
+        }
+        $url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
 
-		if (!empty($this->strategy['scope'])) $params['scope'] = $this->strategy['scope'];
+        if (!empty($this->strategy['scope'])) $params['scope'] = $this->strategy['scope'];
 		if (!empty($this->strategy['state'])) $params['state'] = $this->strategy['state'];
 		if (!empty($this->strategy['response_type'])) $params['response_type'] = $this->strategy['response_type'];
 		if (!empty($this->strategy['display'])) $params['display'] = $this->strategy['display'];
