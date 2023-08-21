@@ -9,6 +9,11 @@
 			"name": "U-Zyn Chua",
 			"email": "chua@uzyn.com",
 			"homepage": "http://uzyn.com"
+		},
+		{
+			"name": "Henrique Mattos",
+			"email": "henrique@visualworks.com.br",
+			"homepage": "https://www.visualworks.com.br"
 		}
 	],
 	"require": {

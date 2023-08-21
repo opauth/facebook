@@ -11,12 +11,17 @@ class FacebookStrategy extends OpauthStrategy {
     private $api_version = 'v12.0'; // Update to the latest supported version
 
     public function request() {
-        $url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
         $params = array(
             'client_id' => $this->strategy['app_id'],
             'redirect_uri' => $this->strategy['redirect_uri'],
             'scope' => $this->strategy['scope'],
         );
+
+        if (!empty($this->strategy['api_version'])) {
+            $params['api_version'] = $this->strategy['api_version'];
+            $this->api_version = $this->strategy['api_version'];
+        }
+        $url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
 
         // Other optional parameters
         if (!empty($this->strategy['state'])) $params['state'] = $this->strategy['state'];
