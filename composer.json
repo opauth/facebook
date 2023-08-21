@@ -2,7 +2,7 @@
 	"name": "opauth/facebook",
 	"description": "Facebook strategy for Opauth",
 	"keywords": ["authentication","auth","facebook"],
-	"homepage": "http://opauth.org",
+	"homepage": "https://opauth.org",
 	"license": "MIT",
 	"authors": [
 		{
