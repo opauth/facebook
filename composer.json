@@ -2,13 +2,18 @@
 	"name": "opauth/facebook",
 	"description": "Facebook strategy for Opauth",
 	"keywords": ["authentication","auth","facebook"],
-	"homepage": "http://opauth.org",
+	"homepage": "https://opauth.org",
 	"license": "MIT",
 	"authors": [
 		{
 			"name": "U-Zyn Chua",
 			"email": "chua@uzyn.com",
 			"homepage": "http://uzyn.com"
+		},
+		{
+			"name": "Henrique Mattos",
+			"email": "henrique@visualworks.com.br",
+			"homepage": "https://www.visualworks.com.br"
 		}
 	],
 	"require": {

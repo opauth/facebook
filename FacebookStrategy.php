@@ -8,15 +8,20 @@ class FacebookStrategy extends OpauthStrategy {
         'scope' => 'email', // Default scope for necessary permissions
     );
 
-    private $api_version = 'v12.0'; // Update to the latest supported version
+    private $api_version = 'v17.0'; // Update to the latest supported version
 
     public function request() {
-        $url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
         $params = array(
             'client_id' => $this->strategy['app_id'],
             'redirect_uri' => $this->strategy['redirect_uri'],
             'scope' => $this->strategy['scope'],
         );
+
+        if (!empty($this->strategy['api_version'])) {
+            $params['api_version'] = $this->strategy['api_version'];
+            $this->api_version = $this->strategy['api_version'];
+        }
+        $url = "https://www.facebook.com/{$this->api_version}/dialog/oauth";
 
         // Other optional parameters
         if (!empty($this->strategy['state'])) $params['state'] = $this->strategy['state'];
@@ -112,6 +117,10 @@ class FacebookStrategy extends OpauthStrategy {
         $fields = 'id,name,email'; // Default fields
         if (isset($this->strategy['fields'])) {
             $fields = $this->strategy['fields'];
+        }
+
+        if (!empty($this->strategy['api_version'])) {
+            $this->api_version = $this->strategy['api_version'];
         }
 
         $me = $this->serverGet(
